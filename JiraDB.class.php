@@ -13,18 +13,24 @@ class JiraDB {
 
     public static function UpdateDatabase($array, $table, $pk, $domain, $project)
     {
+        Global $conn;
         foreach ($array as $map)
         {
-            $query = "SELECT *
-                   FROM $table
-                   WHERE $pk = '$map[$pk]' AND
-                         QC_DOMAIN = '$domain' AND
-                         QC_PROJECT = '$project';";
-            $row = mysql_fetch_array(mysql_query($query));
-            if (!$row)
+            $stmt = $conn->prepare("SELECT *
+                                    FROM $table
+                                    WHERE $pk = :pk AND
+                                          QC_DOMAIN = :domain AND
+                                          QC_PROJECT = :project;");
+            $row = $stmt->execute(array(":pk" => $map[$pk],":domain" => $domain,":project" => $project));
+            if (!$row = $stmt->fetch())
                 self::CreateEntry($map, $table);
             else if (true /*need to compare time stamps here to see if we need to update*/)
-                self::UpdateEntry($map, $table, $pk, $row[$pk]);
+            {
+                $tmp = $conn->prepare("show index from $table where Key_name = 'PRIMARY';");
+                $tmp->execute();
+                $pri_key = $tmp->fetch();
+                self::UpdateEntry($map, $table, $pri_key['Column_name'], $row[$pri_key['Column_name']]);
+            }
         }
     }
 

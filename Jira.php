@@ -6,22 +6,50 @@
 * Time: 11:38 AM
 */
 
-include_once('JiraData.class.php');
+// Stores standard PHP PDO MySQL connection information
+require_once "../config.php";
+Global $conn;
+
+include_once('JiraIssues.class.php');
 include_once('JiraDB.class.php');
 
-$domain = 'JIRA';
-$project = 'JIRA_PROJECT';
-$table = 'QC_DEFECT_DATA';
-$pk = 'QC_DEFECT_ID';
-$credentials = 'username:password';
-$base_url = 'http://jira.com';
-$jql = array('project'=>'10825');
-$search = array('project_name'=>'QC_ACTUAL_PROJECT','priority_name'=>'QC_PRIORITY','duedate'=>'QC_RELEASE_TO_TEST_DATE');
 
-$jira = new \JIRA\JiraData($base_url, $jql, $credentials, $project, $search);
+$query = "SELECT * FROM JIRA_MINER WHERE ACTIVE = TRUE;";
+foreach ($conn->query($query) as $row)
+{
+    $id = $row['JIRA_MINER_ID'];
+    $search = array();
+    $jql = array();
 
-$jira->GetJIRAData();
-$jira->ProcessData();
-print_r($jira->process_array);
+    $filter_query = "SELECT * FROM JIRA_FILTERS WHERE JIRA_MINER_ID = $id;";
+    foreach ($conn->query($filter_query) as $filter_row)
+        $jql[$filter_row['JIRA_COLUMN']] = $filter_row['FILTER'];
 
-\JIRA\JiraDB::UpdateDatabase($jira->process_array, $table, $pk, $domain, $project);
+    $search_query = "SELECT * FROM JIRA_SEARCH WHERE JIRA_MINER_ID = $id;";
+    foreach ($conn->query($search_query) as $search_row)
+        $search[$search_row['JIRA_COLUMN']] = $search_row['DB_COLUMN'];
+
+    /*print_r($jql);
+    print_r($search);*/
+
+    $jira = new \JIRA\JiraIssues(
+        $row['BASE_URL'],
+        $jql,
+        $row['CREDENTIALS'],
+        $row['PROJECT'],
+        $search,
+        $row['MAX']);
+
+    $jira->ProcessData($jira->GetJIRAData(0));
+
+    echo $jira->url_string;
+    //print_r($jira->json_decoded_array);
+    print_r($jira->process_array);
+
+    \JIRA\JiraDB::UpdateDatabase(
+        $jira->process_array,
+        $row['SAVE_TABLE'],
+        $row['SAVE_TABLE_PK'],
+        $row['DOMAIN'],
+        $row['PROJECT']);
+}

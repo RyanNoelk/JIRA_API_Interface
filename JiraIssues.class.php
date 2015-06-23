@@ -1,9 +1,22 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: v610091
+ * User: Ryan Noelk
  * Date: 6/9/2015
- * Time: 11:24 AM
+ *
+ * This class will assist in the logging process for JIRA queries
+ * There are two ways to record the log:
+ *      1. To the command line
+ *      2. To a specific path/file
+ * The constructor takes 5 parameters:
+ *      1. base_url ->
+ *      2. jql -> array of filters for the JIRA query
+ *      3. credentials -> username:password
+ *      4. project -> JIRA project key
+ *      5. search_array -> array of return values from the JIRA query
+ * Public Functions:
+ *      1. GetJIRAData -> Query JIRA with given URL for data with a specific start and max
+ *      2. ProcessData -> Format the JIRA raw data into a formatted data
  */
 
 namespace JIRA;
@@ -12,25 +25,23 @@ namespace JIRA;
 class JiraIssues {
 
     public $url_string = ''; // string which contains the URL to be sent to JIRA
+    public $current_url_string = ''; // current string which contains the URL to be sent to JIRA
     public $credentials = ''; // username:password
     public $project = ''; // JIRA project to mine data from
-    public $max_results = ''; // Max number to issues to be returned in one query
     public $search_array = ''; // database array map
-    public $json_decoded_array = ''; // json decoded data from JIRA query
     public $process_array = array(); // Well formatted data ready to be inserted into the DB
 
-    function __construct($base_url, $jql, $credentials, $project, $search_array, $max_results)
+    function __construct($base_url, $jql, $credentials, $project, $search_array)
     {
         $this->project = $project;
         $this->credentials = $credentials;
         $this->search_array = $search_array;
         $this->process_array = array();
-        $this->max_results = 100;
 
+        // build the URL
         $this->url_string = $base_url."/rest/api/latest/search?jql=";
         foreach ($jql as $key=>$value)
             $this->url_string .= $key."=".$value;
-
         $this->url_string .= "&fields=id";
         foreach ($search_array as $key=>$value)
         {
@@ -39,10 +50,11 @@ class JiraIssues {
         }
     }
 
-    public function GetJIRAData($start_at)
+    // Query JIRA with given URL for data with a specific start and max
+    public function GetJIRAData($start_at, $max_results)
     {
         // Add the start and max to the query
-        $url = $this->url_string . "&startAt=$start_at&maxResults=$this->max_results";
+        $this->current_url_string = $this->url_string . "&startAt=$start_at&maxResults=$max_results";
 
         // Create a new cURL resource
         $qc = curl_init();
@@ -59,26 +71,25 @@ class JiraIssues {
         curl_setopt($qc, CURLOPT_HTTPGET,1);
         curl_setopt($qc, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($qc, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($qc, CURLOPT_URL, $url);
+        curl_setopt($qc, CURLOPT_URL, $this->current_url_string);
         curl_setopt($qc, CURLOPT_RETURNTRANSFER, true);
 
         // Execute query
         $xml = curl_exec($qc);
-        $response = curl_getinfo($qc);
 
         // Return raw data
-        echo $xml;
         $decoded = json_decode($xml, true);
 
         if ('' == $decoded)
-            return "Error";
-        else if ('' == $decoded['issues'])
+            return $xml;
+        else if (empty ($decoded['issues']))
             return "No Data";
         else
             return $decoded;
 
     }
 
+    // Format the JIRA raw data into a formatted data
     public function ProcessData($json_decoded_array)
     {
         foreach ($json_decoded_array['issues'] as $issue)
@@ -102,7 +113,7 @@ class JiraIssues {
         }
     }
 
-
+    // Decode a json array within JIRA
     private function getDataFromArray(&$map, $append, $field)
     {
         foreach ($field as $sub_key=>$sub_field)

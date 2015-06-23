@@ -3,7 +3,10 @@
  * Created by PhpStorm.
  * User: v610091
  * Date: 6/11/2015
- * Time: 9:51 AM
+ *
+ * Custom Database Code used for mapping JIRA formatted data into a MySQL DB
+ *
+ *
  */
 
 namespace JIRA;

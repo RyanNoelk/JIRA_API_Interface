@@ -16,7 +16,7 @@ include_once('JiraLogger.class.php');
 
 // Create new log and give the filename and path to the log file
 // If a log file is not need just remove the filename and log will be printed to the terminal
-$log = new \JIRA\JiraLogger("tmp.txt");
+$log = new \JIRA\JiraLogger(/*"tmp.txt"*/);
 
 //Loop though each JIRA Project that needs to be tracked
 $query = "SELECT * FROM JIRA_MINER WHERE ACTIVE = TRUE;";
@@ -49,7 +49,7 @@ foreach ($conn->query($query) as $row)
         $row['CREDENTIALS'],
         $row['PROJECT'],
         $search,
-        $row['MAX']);
+        $row['DAYS']);
 
     while (is_array($data = $jira->GetJIRAData($start, $max)) or $start == 0)
     {

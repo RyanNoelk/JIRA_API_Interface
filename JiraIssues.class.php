@@ -31,7 +31,7 @@ class JiraIssues {
     public $search_array = ''; // database array map
     public $process_array = array(); // Well formatted data ready to be inserted into the DB
 
-    function __construct($base_url, $jql, $credentials, $project, $search_array)
+    function __construct($base_url, $jql, $credentials, $project, $search_array, $days)
     {
         $this->project = $project;
         $this->credentials = $credentials;
@@ -40,8 +40,12 @@ class JiraIssues {
 
         // build the URL
         $this->url_string = $base_url."/rest/api/latest/search?jql=";
+
+        $time = strtotime("-$days days");
+        $this->url_string .= "updated>" . date('Y-m-d', $time);
         foreach ($jql as $key=>$value)
-            $this->url_string .= $key."=".$value;
+            $this->url_string .= "%20AND%20" . $key . "=" . $value;
+
         $this->url_string .= "&fields=id";
         foreach ($search_array as $key=>$value)
         {
@@ -100,7 +104,12 @@ class JiraIssues {
                 if (null == $field or '' == $field)
                     continue;
                 else if (is_array($field))
-                    self::getDataFromArray($map, $key, $field);
+                {
+                    if (is_array($field[0]))
+                        self::getDataFromArray($map, $key, $field[0]);
+                    else
+                        self::getDataFromArray($map, $key, $field);
+                }
                 else if ('' != $this->search_array[$key])
                     $map[$this->search_array[$key]] = $field;
             }

@@ -113,8 +113,8 @@ class JiraIssues {
                 else if ('' != $this->search_array[$key])
                     $map[$this->search_array[$key]] = $field;
             }
-
             $map['QC_DEFECT_ID'] = $issue['id'];
+            $map['QC_ENVIRONMENT'] = $issue['key'];
             $map['QC_DOMAIN'] = "JIRA";
             $map['QC_PROJECT'] = $this->project;
             $map['ERA_CREATED_DATE'] = 'NOW()';
@@ -136,6 +136,5 @@ class JiraIssues {
                 $map[$this->search_array[$key]] = $sub_field;
         }
     }
-
 
 }

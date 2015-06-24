@@ -1,18 +1,24 @@
+#!/usr/bin/php
+
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Ryan Noelk
  * Date: 6/9/2015
 */
 
+// define the root path for including files. If you use this in a cron, it may not know where to look for the included/required files/classes.
+define('__SCRIPT_ROOT', dirname(__FILE__));
+
 // Stores standard PHP PDO MySQL connection information
-require_once "../config.php";
+require_once(__SCRIPT_ROOT . "/../config.php");
 Global $conn;
 
 // Include the classes (only once)
-include_once('JiraIssues.class.php');
-include_once('JiraDB.class.php');
-include_once('JiraLogger.class.php');
+include_once(__SCRIPT_ROOT . '/JiraIssues.class.php');
+include_once(__SCRIPT_ROOT . '/JiraDB.class.php');
+include_once(__SCRIPT_ROOT . '/JiraLogger.class.php');
 
 // Create new log and give the filename and path to the log file
 // If a log file is not need just remove the filename and log will be printed to the terminal

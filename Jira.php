@@ -30,9 +30,9 @@ foreach ($conn->query($query) as $row)
 {
     // Set and Initialize vars
     $id = $row['JIRA_MINER_ID'];
-    $search = array();
-    $jql = array();
-    $max = 100; $start = 0;
+    $search = $jql = array();
+    $max = $row['MAX'];
+    $start = 0;
 
     // Fetch all the filters for the query to JIRA
     $filter_query = "SELECT * FROM JIRA_FILTERS WHERE JIRA_MINER_ID = $id;";

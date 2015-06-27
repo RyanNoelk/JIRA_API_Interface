@@ -35,11 +35,17 @@ class JiraLogger {
                 $this->file = fopen($filename, "w");
                 $this->command_line_output = False;
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
                 if ($require_file_logging)
+                {
+                    echo 'Caught exception: ', $e->getMessage(), "\n";
                     exit("Log file is required, please try again");
+                }
+                else
+                    echo "\n\nFailed to open file. Will use echo.\n\n\n";
+
+                $this->command_line_output = True;
             }
         }
         else

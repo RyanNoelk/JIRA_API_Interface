@@ -10,7 +10,6 @@
  *      testFileFailEcho - test that a file will fail gracefully and then print ot the terminal
  *      testFileEcho - tests that output will be saved to a file
  *      testFileEchoHeader - tests that a header will be saved to a file
- *
  */
 
 define('__SCRIPT_ROOT', dirname(__FILE__));
@@ -18,7 +17,7 @@ require_once(__SCRIPT_ROOT . "/../JiraLogger.class.php");
 
 class JiraLogger_test extends PHPUnit_Framework_TestCase
 {
-
+    // test the basic console output
     public function testEcho()
     {
         $this->expectOutputString(
@@ -34,6 +33,7 @@ class JiraLogger_test extends PHPUnit_Framework_TestCase
         $log->print_str("Hello Test");
     }
 
+    // testing printing the header to the terminal
     public function testEchoHeader()
     {
         $this->expectOutputString(
@@ -49,6 +49,7 @@ class JiraLogger_test extends PHPUnit_Framework_TestCase
         $log->print_header("Heading 1", $lines=15);
     }
 
+    // test that a file will fail gracefully and then print ot the terminal
     public function testFileFailEcho()
     {
         $this->expectOutputString(
@@ -64,6 +65,7 @@ class JiraLogger_test extends PHPUnit_Framework_TestCase
         $log->print_str("Hello Test");
     }
 
+    // tests that output will be saved to a file
     public function testFileEcho()
     {
         $output =
@@ -80,6 +82,7 @@ class JiraLogger_test extends PHPUnit_Framework_TestCase
         $this->assertEquals($output, file_get_contents('/tmp/testFileEcho.txt'));
     }
 
+    // tests that a header will be saved to a file
     public function testFileEchoHeader()
     {
         $output =

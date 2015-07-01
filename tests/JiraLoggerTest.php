@@ -13,7 +13,7 @@
  */
 
 define('__SCRIPT_ROOT', dirname(__FILE__));
-require_once(__SCRIPT_ROOT . "/../JiraLogger.class.php");
+require_once(__SCRIPT_ROOT . "/../JIRA/JiraLogger.class.php");
 
 class JiraLogger_test extends PHPUnit_Framework_TestCase
 {

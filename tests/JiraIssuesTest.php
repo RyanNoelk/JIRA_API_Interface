@@ -11,7 +11,7 @@
  */
 
 define('__SCRIPT_ROOT', dirname(__FILE__));
-require_once(__SCRIPT_ROOT . "/../JiraIssues.class.php");
+require_once(__SCRIPT_ROOT . "/../JIRA/JiraIssues.class.php");
 
 
 class JiraIssues_test extends PHPUnit_Framework_TestCase

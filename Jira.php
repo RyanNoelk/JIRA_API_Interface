@@ -12,13 +12,13 @@
 define('__SCRIPT_ROOT', dirname(__FILE__));
 
 // Stores standard PHP PDO MySQL connection information
-require_once(__SCRIPT_ROOT . "/../config.php");
+require_once(__SCRIPT_ROOT . "/../../config.php");
 Global $conn;
 
 // Include the classes (only once)
-include_once(__SCRIPT_ROOT . '/JiraIssues.class.php');
-include_once(__SCRIPT_ROOT . '/JiraDB.class.php');
-include_once(__SCRIPT_ROOT . '/JiraLogger.class.php');
+include_once(__SCRIPT_ROOT . '/JIRA/JiraIssues.class.php');
+include_once(__SCRIPT_ROOT . '/JIRA/JiraDB.class.php');
+include_once(__SCRIPT_ROOT . '/JIRA/JiraLogger.class.php');
 
 // Create new log and give the filename and path to the log file
 // If a log file is not need just remove the filename and log will be printed to the terminal

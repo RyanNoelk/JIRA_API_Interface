@@ -13,7 +13,7 @@ namespace JIRA;
 
 // define the root path for including files. If you use this in a cron, it may not know where to look for the included/required files/classes.
 define('__SCRIPT_ROOT', dirname(__FILE__));
-require_once(__SCRIPT_ROOT . "/../config.php");
+require_once(__SCRIPT_ROOT . "/../../config.php");
 
 class JiraDB {
 

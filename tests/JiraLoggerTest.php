@@ -1,9 +1,16 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: v610091
+ * User: Ryan Noelk
  * Date: 6/26/2015
- * Time: 11:42 AM
+ *
+ * 5 test cases for the logging class:
+ *      testEcho - test the basic console output
+ *      testEchoHeader - testing printing the header to the terminal
+ *      testFileFailEcho - test that a file will fail gracefully and then print ot the terminal
+ *      testFileEcho - tests that output will be saved to a file
+ *      testFileEchoHeader - tests that a header will be saved to a file
+ *
  */
 
 define('__SCRIPT_ROOT', dirname(__FILE__));

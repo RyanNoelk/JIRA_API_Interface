@@ -12,7 +12,7 @@
 define('__SCRIPT_ROOT', dirname(__FILE__));
 
 // Stores standard PHP PDO MySQL connection information
-require_once(__SCRIPT_ROOT . "/../../config.php");
+require_once(__SCRIPT_ROOT . "/../config.php");
 Global $conn;
 
 // Include the classes (only once)
